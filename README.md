@@ -1,6 +1,6 @@
 # TaskFlow-MVP
 git clone repository
-npm i
+run command npm i
 create .env file and create PORT=3000 in .env file
 command node index.js for running server
 
