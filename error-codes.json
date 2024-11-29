@@ -1,0 +1,6 @@
+{
+    "TASK_NOT_FOUND" : {
+        "statusCode": 404,
+        "message": "Task Not Found"
+    }
+}

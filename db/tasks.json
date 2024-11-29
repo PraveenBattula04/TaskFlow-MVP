@@ -1,0 +1,44 @@
+[
+  {
+    "id": "6734ac3c-d5e7-476c-8af7-e6fb5e3e99f1",
+    "title": "complete work",
+    "description": "complete the assigned work soon",
+    "status": "pending"
+  },
+  {
+    "id": "3fa4029c-a661-4816-87e6-e116459c3876",
+    "title": "complete work",
+    "description": "complete the assigned work soon",
+    "status": "pending"
+  },
+  {
+    "id": "17e022b7-7986-4131-be7a-c911ea7b1f7e",
+    "title": "complete work",
+    "description": "complete the assigned work soon",
+    "status": "pending"
+  },
+  {
+    "id": "52d1defc-8702-4cc3-89fc-49fef7acca1a",
+    "title": "door painting",
+    "description": "paint both sides",
+    "status": "pending"
+  },
+  {
+    "id": "d77f9ec6-d2aa-4943-8be5-40c63450c8ae",
+    "title": "Buy groceries",
+    "description": "Get milk, eggs, and bread",
+    "status": "pending"
+  },
+  {
+    "id": "5ac2f824-ceb1-45f5-a5d6-6bf0aa5560ad",
+    "title": "phone repair",
+    "description": "battery checkup",
+    "status": "completed"
+  },
+  {
+    "id": "c90d4f25-87b9-41fc-8592-20d2faa589ed",
+    "title": "phone repair",
+    "description": "battery checkup",
+    "status": "pending"
+  }
+]
