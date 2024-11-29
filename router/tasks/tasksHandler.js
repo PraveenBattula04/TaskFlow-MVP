@@ -28,7 +28,11 @@ async function updateTask (req, res, next) {
     try {
         const data = {...req.body, ...req.params}
         let result = await TasksController.updateTask(data)
-        customResponse(200, result, res)
+        res.status(200).json({
+            success: true,
+            message: 'Task created successfully',
+            task: result
+        })
     } catch (err) {
         customResponse(400, err, res)
     }
