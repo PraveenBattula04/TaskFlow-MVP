@@ -17,7 +17,8 @@ async function createTask (req, res, next) {
 
 async function getTasks (req, res, next) {
     try {
-        let result = await models.tasks.find()
+        const data = {...req.params, ...req.query}
+        let result = await TasksController.sortTasks(data)
         customResponse(200, result, res)
     } catch (err) {
         customResponse(400, err, res)
@@ -30,7 +31,7 @@ async function updateTask (req, res, next) {
         let result = await TasksController.updateTask(data)
         res.status(200).json({
             success: true,
-            message: 'Task created successfully',
+            message: 'Task updated successfully',
             task: result
         })
     } catch (err) {
@@ -50,7 +51,7 @@ async function deleteTask (req, res, next) {
 
 async function filterTasks (req, res, next) {
     try {
-        const data = req.params
+        const data = req.query
         let result = await TasksController.filterTasks(data)
         customResponse(200, result, res)
     } catch (err) {
