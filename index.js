@@ -5,9 +5,10 @@ const bodyParser = require('body-parser')
 const app = express()
 const port = process.env.port
 const apiRoute = require('./router/index')
+const db = require('./models/index')
 app.use(bodyParser.json({ limit: '1MB' }))
 app.use(cors())
-
+db.sync()
 
 app.get('/ping', (req, res) => {
     res.send('pong')

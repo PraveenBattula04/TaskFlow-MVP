@@ -1,28 +1,32 @@
 const { v4: uuidv4 } = require('uuid');
 const FileController = require('../jsonFileController/fileController')
+const models = require('../../models/index');
+const mongoose = require('mongoose');
 
 class TasksController {
     static async createTask(data) {
+        let session = await mongoose.startSession();
         try {
-            const { title, description } = data
-            const tasks = await FileController.loadTasks();
-            const newTask = {
-                id: uuidv4(),
-                title,
-                description,
-                status: 'pending'
-            };
-            await tasks.push(newTask);
-            await FileController.saveTasks(tasks);
-            return newTask
+            session.startTransaction();            
+            let result = await models.tasks.create([data], {session});
+            if(result && result.length) result = result[0].toJSON()
+            await session.commitTransaction()
+            await session.endSession()
+            return result
         } catch (error) {
+            await session.abortTransaction()
+            await session.endSession()
             throw error
         }
     }
 
-    static async getTasks() {
+    static async sortTasks(data) {
         try {
-            const tasks = await FileController.loadTasks();
+            let {by, order} = data
+            const paylaod = {}
+            paylaod[by] = order === 'asc' ? 1 : 2
+            let tasks = await models.tasks.find().sort({...paylaod});
+            // if(tasks && tasks.length) tasks = tasks.toJSON()
             return tasks
         } catch(err) {
             throw err
@@ -31,15 +35,14 @@ class TasksController {
 
     static async updateTask(data) {
         try {
-            const { status, id } = data
-            const tasks = await FileController.loadTasks();
-            const index = tasks.findIndex(task => task.id === id);
-            if (index === -1) {
+            const { id, ...payload } = data
+            let tasks = await models.tasks.findOneAndUpdate({_id: id},
+                {$set: payload}, {new: true}
+            )
+            if (!tasks) {
                 throw new Error('TASK_NOT_FOUND')
-            }
-            tasks[index].status = status
-            await FileController.saveTasks(tasks);
-            return tasks[index]
+            } else tasks = tasks.toJSON()
+            return tasks
         } catch(err) {
             throw err
         }
@@ -48,12 +51,10 @@ class TasksController {
     static async deleteTask(data) {
         try {
             const { id } = data
-            const tasks = await FileController.loadTasks();
-            const filteredTasks = await tasks.filter(e => e.id !== id)
-            if(tasks.length && (tasks.length === filteredTasks?.length)) {
+            const tasks = await models.tasks.findOneAndDelete({_id: id})
+            if(!tasks) {
                 throw new Error('TASK_NOT_FOUND')
             }
-            await FileController.saveTasks(filteredTasks);
             return 'Task deleted successfully'
         } catch(err) {
             throw err
@@ -62,9 +63,12 @@ class TasksController {
 
     static async filterTasks(data) {
         try {
-            const { status } = data
-            let tasks = await FileController.loadTasks();
-            tasks = await tasks.filter(e => e.status === status)
+            const {dueDateStart, dueDateEnd, ...payload} = {...data}
+            let tasks = await models.tasks.find({...payload, dueDate: {
+                $gte: dueDateStart,
+                $lte: dueDateEnd
+            }})
+            if(tasks && tasks.length) tasks = tasks[0].toJSON()
             return tasks
         } catch(err) {
             throw err
