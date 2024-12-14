@@ -1,28 +1,31 @@
 const { v4: uuidv4 } = require('uuid');
 const FileController = require('../jsonFileController/fileController')
+const models = require('../../models/index');
+const mongoose = require('mongoose');
 
 class TasksController {
     static async createTask(data) {
+        let session = await mongoose.startSession();
         try {
-            const { title, description } = data
-            const tasks = await FileController.loadTasks();
-            const newTask = {
-                id: uuidv4(),
-                title,
-                description,
-                status: 'pending'
-            };
-            await tasks.push(newTask);
-            await FileController.saveTasks(tasks);
-            return newTask
+            session.startTransaction();
+            const { title, description, status, priority, dueDate } = data
+            
+            let result = await models.tasks.create([data], {session});
+            if(result && result.length) result = result[1].toJSON()
+            await session.commitTransaction()
+            await session.endSession()
+            return result
         } catch (error) {
+            await session.abortTransaction()
+            await session.endSession()
             throw error
         }
     }
 
     static async getTasks() {
         try {
-            const tasks = await FileController.loadTasks();
+            let tasks = await models.tasks.find();
+            if(tasks && tasks.length) tasks = tasks.toJSON()
             return tasks
         } catch(err) {
             throw err

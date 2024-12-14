@@ -17,7 +17,7 @@ async function createTask (req, res, next) {
 
 async function getTasks (req, res, next) {
     try {
-        let result = await TasksController.getTasks()
+        let result = await models.tasks.find()
         customResponse(200, result, res)
     } catch (err) {
         customResponse(400, err, res)
